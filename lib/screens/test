@@ -1,0 +1,83 @@
+
+                          SingleChildScrollView
+                          (
+                            scrollDirection: Axis.horizontal,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                FutureBuilder<List<Movie>>(
+                                  future: ApiService.getActorMovies(actor.id),
+                                  builder: (context, snapshot) 
+                                  {
+                                    if (snapshot.connectionState == ConnectionState.waiting) 
+                                    {
+                                      return Center(child: CircularProgressIndicator());
+                                    } 
+                                    else if (snapshot.hasError) 
+                                    {
+                                      return Center(child: Text('Error: ${snapshot.error}'));
+                                    } 
+                                    else if (snapshot.hasData && snapshot.data!.isNotEmpty) 
+                                    {
+                                      return Row
+                                      (
+                                        children: snapshot.data!.map((movie) 
+                                        {
+                                          return GestureDetector
+                                          (
+                                            onTap: () 
+                                            {
+                                              Navigator.push
+                                              (
+                                                context,
+                                                MaterialPageRoute
+                                                (
+                                                  builder: (context) => MovieDetailScreen(movie: movie),
+                                                ),
+                                              );
+                                            },
+                                            child: Container
+                                            (
+                                              margin: const EdgeInsets.all(8.0),
+                                              width: 150,
+                                              child: Column
+                                              (
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: 
+                                                [
+                                                  ClipRRect
+                                                  (
+                                                    borderRadius: BorderRadius.circular(8.0),
+                                                    child: Image.network
+                                                    (
+                                                      'https://image.tmdb.org/t/p/w500/${movie.posterPath}',
+                                                      width: 150,
+                                                      height: 200,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 8.0),
+                                                  Text
+                                                  (
+                                                    movie.title,
+                                                    style: TextStyle
+                                                    (
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      );
+                                    } 
+                                    else 
+                                    {
+                                      return Center(child: Text('No movies found for this actor.'));
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
